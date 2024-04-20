@@ -1,26 +1,25 @@
+# main.py
+
 import numpy as np
 import time
-
 from algorithm import method_by_branches
-from randomMatrix import randomMatrix
+from randomMatrix import generate_random_weighted_graph
 
-# Встановлюємо кількість вершин та щільність
 n = 100  # Кількість вершин
-delta = 0.1  # Щільність
+density = 0.1  # Щільність (відношення кількості ребер до максимально можливої)
 
-# Викликаємо randomMatrix для генерації матриці суміжності
-matrix = randomMatrix(n, delta)
+# Генеруємо випадковий зважений граф
+adj_matrix = generate_random_weighted_graph(n, density)
 
-main_matrix = np.array(matrix)
+main_matrix = np.array(adj_matrix)
 
 start = time.time()
 
-# Виконуємо алгоритм на отриманій матриці
 optimal_path = method_by_branches(main_matrix)
 
 end = time.time()
 
-execution = end - start
+execution_time = end - start
 
 print(optimal_path)
-print("time: ", execution)
+print("Час виконання: ", execution_time)
