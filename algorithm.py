@@ -1,41 +1,85 @@
+# algorithm.py
+
 import numpy as np
+from collections import deque
 
 def method_by_branches(main_matrix):
+    length = np.inf
     n = main_matrix.shape[0]
     min_cost = np.inf
     min_path = []
 
     def cost(path):
         total = 0
-        for i in range(len(path) - 1):
-            total += main_matrix[path[i], path[i + 1]]
-        total += main_matrix[path[-1], path[0]]  # Closing the loop
+        for i in range(n-1):
+            total += main_matrix[path[i], path[i+1]]
+        total += main_matrix[path[-1], path[0]]
         return total
 
-    # Stack-based DFS implementation
-    def dfs_stack(start_point):
-        nonlocal min_cost, min_path
-        stack = [([start_point], 0)]
+    def branch_and_bound(path, bound):
+        nonlocal min_cost, min_path, length
+
+        if len(path) == n:
+            path_cost = cost(path)
+            if path_cost < min_cost:
+                min_cost = path_cost
+                min_path = path
+            length = min_cost
+            return
+
+        for i in range(n):
+            if i not in path:
+                new_bound = bound - main_matrix[path[-1], i]
+                if new_bound < min_cost:
+                    branch_and_bound(path + [i], new_bound)
+
+    def bfs_shortest_path(adj_matrix, start, goal):
+        queue = deque([(start, [start])])
+        visited = set([start])
+
+        while queue:
+            node, path = queue.popleft()
+
+            if node == goal:
+                return path
+
+            # Отримуємо індекси сусідів, які мають ненульові значення у матриці суміжності
+            neighbors = np.nonzero(adj_matrix[node])[0]
+
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    queue.append((neighbor, path + [neighbor]))
+                    visited.add(neighbor)
+
+        return []  # Якщо шлях не знайдено
+
+    def dfs_shortest_path(adj_matrix, start, goal):
+        stack = [(start, [start])]
+        visited = set([start])
 
         while stack:
-            current_path, current_cost = stack.pop()
-            if len(current_path) == n:
-                path_cost = cost(current_path)
-                if path_cost < min_cost:
-                    min_cost = path_cost
-                    min_path = current_path[:]
-                continue
+            node, path = stack.pop()
 
-            last = current_path[-1]
-            for i in range(n):
-                if i not in current_path and main_matrix[last, i] > 0:
-                    new_cost = current_cost + main_matrix[last, i]
-                    if new_cost < min_cost:
-                        stack.append((current_path + [i], new_cost))
+            if node == goal:
+                return path
 
-    for start_point in range(n):
-        dfs_stack(start_point)
-        if len(min_path) == n:
-            break
+            # Отримуємо індекси сусідів, які мають ненульові значення у матриці суміжності
+            neighbors = np.nonzero(adj_matrix[node])[0]
 
-    return min_path, min_cost
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    stack.append((neighbor, path + [neighbor]))
+                    visited.add(neighbor)
+
+        return []  # Якщо шлях не знайдено
+
+    # Виклик функції з пошуком найкоротшого шляху за допомогою BFS
+    shortest_path_bfs = bfs_shortest_path(main_matrix, 0, n-1)
+
+    # Виклик функції з пошуком найкоротшого шляху за допомогою DFS
+    shortest_path_dfs = dfs_shortest_path(main_matrix, 0, n-1)
+
+    return shortest_path_bfs, shortest_path_dfs
+
+
+# Ви можете додати інші допоміжні функції або класи нижче, якщо потрібно
