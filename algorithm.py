@@ -1,4 +1,3 @@
-# algorithm.py
 
 import numpy as np
 from collections import deque
@@ -43,7 +42,7 @@ def method_by_branches(main_matrix):
             if node == goal:
                 return path
 
-            # Отримуємо індекси сусідів, які мають ненульові значення у матриці суміжності
+
             neighbors = np.nonzero(adj_matrix[node])[0]
 
             for neighbor in neighbors:
@@ -51,7 +50,7 @@ def method_by_branches(main_matrix):
                     queue.append((neighbor, path + [neighbor]))
                     visited.add(neighbor)
 
-        return []  # Якщо шлях не знайдено
+        return []
 
     def dfs_shortest_path(adj_matrix, start, goal):
         stack = [(start, [start])]
@@ -63,7 +62,7 @@ def method_by_branches(main_matrix):
             if node == goal:
                 return path
 
-            # Отримуємо індекси сусідів, які мають ненульові значення у матриці суміжності
+
             neighbors = np.nonzero(adj_matrix[node])[0]
 
             for neighbor in neighbors:
@@ -71,15 +70,13 @@ def method_by_branches(main_matrix):
                     stack.append((neighbor, path + [neighbor]))
                     visited.add(neighbor)
 
-        return []  # Якщо шлях не знайдено
+        return []
 
-    # Виклик функції з пошуком найкоротшого шляху за допомогою BFS
+
     shortest_path_bfs = bfs_shortest_path(main_matrix, 0, n-1)
 
-    # Виклик функції з пошуком найкоротшого шляху за допомогою DFS
+
     shortest_path_dfs = dfs_shortest_path(main_matrix, 0, n-1)
 
     return shortest_path_bfs, shortest_path_dfs
 
-
-# Ви можете додати інші допоміжні функції або класи нижче, якщо потрібно
