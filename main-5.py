@@ -1,35 +1,36 @@
-# main.py
 
-import numpy as np
 import time
 from algorithm import method_by_branches
-from randomMatrix import generate_random_weighted_graph
+from randomMatrix import generate_random_weighted_graph , n , density
 
-# Функція для виведення шляху
+
 def print_path(method_name, path):
     if not path:
         print(f"Шлях не знайдено для методу {method_name}.")
     else:
         print(f"Найкоротший шлях методом {method_name}: {path}")
-        print(f"Довжина шляху методом {method_name}: {len(path) - 1}")  # Кількість ребер у шляху
+        print(f"Довжина шляху методом {method_name}: {len(path) - 1}")
 
-# Параметри графа
-n = 100  # Кількість вершин
-density = 0.1  # Щільність (відношення кількості ребер до максимально можливої)
 
-# Генеруємо випадковий зважений граф
+
+
 adj_matrix = generate_random_weighted_graph(n, density)
 
-start = time.time()
 
-# Виклик функції з пошуком найкоротших шляхів за допомогою обох методів
-shortest_path_bfs, shortest_path_dfs = method_by_branches(adj_matrix)
+start_bfs = time.time()
+shortest_path_bfs, _ = method_by_branches(adj_matrix)
+end_bfs = time.time()
+execution_time_bfs = end_bfs - start_bfs
 
-end = time.time()
 
-execution_time = end - start
+start_dfs = time.time()
+_, shortest_path_dfs = method_by_branches(adj_matrix)
+end_dfs = time.time()
+execution_time_dfs = end_dfs - start_dfs
 
-# Виводимо результати
-print("Час виконання алгоритму:", execution_time)
+
+print("Час виконання алгоритму BFS:", execution_time_bfs)
 print_path("BFS", shortest_path_bfs)
+
+print("Час виконання алгоритму DFS:", execution_time_dfs)
 print_path("DFS", shortest_path_dfs)
